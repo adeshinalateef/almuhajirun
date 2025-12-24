@@ -1,6 +1,13 @@
 import React from 'react';
 
 const Support: React.FC = () => {
+  const accountNo = "8054282302";
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(accountNo);
+    alert('Account Number Copied');
+  };
+
   const categories = [
     { name: "Sadaqah for Knowledge", desc: "Covers teaching materials, teacher stipends, and scholarships for deserving students unable to afford Islamic education.", icon: "fa-book" },
     { name: "Sadaqah Jāriyah Projects", desc: "Long-term impact: Mosque and Madrasah development.", icon: "fa-building-columns" },
@@ -62,11 +69,14 @@ const Support: React.FC = () => {
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-slate-100">
                   <span className="text-slate-500 font-medium">Account No.</span>
-                  <span className="font-bold">8054282302</span>
+                  <span className="font-bold">{accountNo}</span>
                 </div>
                 <div className="pt-4">
-                  <button className="w-full bg-amber-500 text-amber-950 font-bold py-4 rounded-xl hover:bg-amber-400 transition-all shadow-lg shadow-amber-900/20">
-                    Copy Details
+                  <button 
+                    onClick={handleCopy}
+                    className="w-full bg-amber-500 text-amber-950 font-bold py-4 rounded-xl hover:bg-amber-400 transition-all shadow-lg shadow-amber-900/20"
+                  >
+                    Copy Account Details
                   </button>
                 </div>
               </div>

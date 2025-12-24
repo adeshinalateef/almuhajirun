@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
@@ -8,6 +8,10 @@ import ContactForm from './components/ContactForm';
 import AIConsultant from './components/AIConsultant';
 
 const App: React.FC = () => {
+  useEffect(() => {
+    document.title = "Al-Muhaajirun";
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-50">
       <Navbar />

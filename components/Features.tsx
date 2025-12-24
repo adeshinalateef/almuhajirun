@@ -5,7 +5,7 @@ const programs = [
     title: "1. Student of Knowledge",
     subtitle: "For serious learners seeking strong foundations",
     description: "Memorization combined with explanation and understanding, following the methodology of the Salaf.",
-    focus: ["Sound 'Aqeedah", "Qur'an with understanding", "Basic Arabic", "Classical texts (mutūn)", "Fiqh of worship", "Manners of seeking knowledge"],
+    focus: ["Sound Aqeedah", "Qur'an with understanding", "Arabic", "Classical texts (mutūn)", "Fiqh of worship", "Manners of seeking knowledge"],
     icon: "fa-book-open-reader",
     color: "emerald"
   },
@@ -13,7 +13,7 @@ const programs = [
     title: "2. Regular Madrasah",
     subtitle: "For children and general students",
     description: "Structured Islamic education focusing on building correct belief, proper worship, and Islamic character.",
-    focus: ["Qur'an reading", "Basic 'Aqeedah", "Fiqh of daily worship", "Islamic manners"],
+    focus: ["Qur'an reading", "'Aqeedah", "Fiqh", "Islamic manners"],
     icon: "fa-graduation-cap",
     color: "blue"
   },
@@ -54,7 +54,7 @@ const Features: React.FC = () => {
           {programs.map((prog, idx) => (
             <div key={idx} className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl transition-all group">
               <div className="flex items-start gap-6">
-                <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-800 text-3xl group-hover:bg-emerald-800 group-hover:text-white transition-all flex-shrink-0">
+                <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-800 text-3xl flex-shrink-0">
                   <i className={`fa-solid ${prog.icon}`}></i>
                 </div>
                 <div className="flex-1">
@@ -65,7 +65,7 @@ const Features: React.FC = () => {
                   <div className="grid grid-cols-2 gap-y-2 gap-x-4 mb-6">
                     {prog.focus.map((item, i) => (
                       <div key={i} className="flex items-center gap-2 text-xs font-medium text-slate-500">
-                        <div className="w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
+                        <div className="w-1.5 h-1.5 bg-amber-500 rounded-full flex-shrink-0"></div>
                         {item}
                       </div>
                     ))}
