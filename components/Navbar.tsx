@@ -1,7 +1,12 @@
 
 import React, { useState } from 'react';
 
-const Navbar: React.FC = () => {
+type Props = {
+  onDonateClick?: () => void;
+  onArbainClick?: () => void;
+};
+
+const Navbar: React.FC<Props> = ({ onDonateClick, onArbainClick }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -21,8 +26,11 @@ const Navbar: React.FC = () => {
             <a href="#about" className="text-slate-600 hover:text-emerald-700 font-medium transition-colors">About</a>
             <a href="#programs" className="text-slate-600 hover:text-emerald-700 font-medium transition-colors">Programs</a>
             <a href="#support" className="text-slate-600 hover:text-emerald-700 font-medium transition-colors">Support</a>
-            <button className="bg-emerald-800 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-emerald-900 transition-all shadow-md">
-              Enrollment
+            <button onClick={onDonateClick} className="bg-emerald-800 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-emerald-900 transition-all shadow-md">
+              Donate
+            </button>
+            <button onClick={onArbainClick} className="bg-amber-500 text-emerald-950 px-6 py-2.5 rounded-lg font-bold hover:bg-amber-600 transition-all shadow-md">
+              Arba’in Group
             </button>
           </div>
 
@@ -40,8 +48,11 @@ const Navbar: React.FC = () => {
           <a href="#about" className="block text-slate-600 hover:text-emerald-700 font-medium py-2">About</a>
           <a href="#programs" className="block text-slate-600 hover:text-emerald-700 font-medium py-2">Programs</a>
           <a href="#support" className="block text-slate-600 hover:text-emerald-700 font-medium py-2">Support</a>
-          <button className="w-full bg-emerald-800 text-white px-5 py-3 rounded-lg font-semibold hover:bg-emerald-900 transition-all">
-            Start Enrollment
+          <button onClick={() => { setIsOpen(false); onDonateClick?.(); }} className="w-full bg-emerald-800 text-white px-5 py-3 rounded-lg font-semibold hover:bg-emerald-900 transition-all">
+            Donate
+          </button>
+          <button onClick={() => { setIsOpen(false); onArbainClick?.(); }} className="w-full bg-amber-500 text-emerald-950 px-5 py-3 rounded-lg font-bold hover:bg-amber-600 transition-all">
+            Arba’in Group
           </button>
         </div>
       )}
