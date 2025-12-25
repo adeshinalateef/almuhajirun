@@ -5,7 +5,6 @@ import About from './components/About';
 import Features from './components/Features';
 import Support from './components/Support';
 import ContactForm from './components/ContactForm';
-import AIConsultant from './components/AIConsultant';
 
 const App: React.FC = () => {
   const [showDonate, setShowDonate] = useState(false);
@@ -227,8 +226,8 @@ const App: React.FC = () => {
             </div>
 
             <div className="flex gap-4">
-              <a href="#" className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-amber-500 hover:text-emerald-950 transition-all border border-white/10"><i className="fa-brands fa-whatsapp"></i></a>
-              <a href="#" className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-amber-500 hover:text-emerald-950 transition-all border border-white/10"><i className="fa-brands fa-youtube"></i></a>
+              <a href="https://wa.me/2348054282302" target="_blank" rel="noreferrer" className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-amber-500 hover:text-emerald-950 transition-all border border-white/10"><i className="fa-brands fa-whatsapp"></i></a>
+              <a href="https://www.youtube.com/@Almuhajirun1" target="_blank" rel="noreferrer" className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-amber-500 hover:text-emerald-950 transition-all border border-white/10"><i className="fa-brands fa-youtube"></i></a>
               <a href="#" className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-amber-500 hover:text-emerald-950 transition-all border border-white/10"><i className="fa-brands fa-facebook"></i></a>
             </div>
           </div>
@@ -239,8 +238,6 @@ const App: React.FC = () => {
           </div>
         </div>
       </footer>
-
-      <AIConsultant />
 
       {/* Donation Modal */}
       {showDonate && (
