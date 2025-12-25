@@ -14,59 +14,42 @@ const App: React.FC = () => {
   const donateRef = useRef<HTMLDivElement | null>(null);
   const arbainRef = useRef<HTMLDivElement | null>(null);
   const lastFocusedRef = useRef<HTMLElement | null>(null);
-  const exitIntentShownRef = useRef(false);
-  const activityTimerRef = useRef<number | null>(null);
+  const initializedOnScrollRef = useRef(false);
+  const arbainTimerRef = useRef<number | null>(null);
+  const donateTimerRef = useRef<number | null>(null);
+  const autoCloseArbainRef = useRef<number | null>(null);
+  const autoCloseDonateRef = useRef<number | null>(null);
 
   useEffect(() => {
     document.title = "Al-Muhaajirun";
   }, []);
 
-  // CTA triggers and UX improvements
+  // CTA triggers based on first scroll and UX improvements
   useEffect(() => {
-    // Arba'in: show after 3 minutes (once per session)
-    let arbainTimer: number | undefined;
-    if (!sessionStorage.getItem('arbainShownThisSession')) {
-      const ARBAIN_DELAY = 3 * 60 * 1000; // 3 minutes
-      arbainTimer = window.setTimeout(() => {
+    const onFirstScroll = () => {
+      if (initializedOnScrollRef.current) return;
+      if (window.scrollY <= 0) return; // ensure actual scroll occurred
+      initializedOnScrollRef.current = true;
+
+      const ARBAIN_DELAY_MS = 3000; // 3 seconds after scroll
+      const DONATE_DELAY_MS = 22_000; // 22 seconds after scroll
+
+      // schedule Arba'in popup once per page load
+      arbainTimerRef.current = window.setTimeout(() => {
         setShowArbain(true);
-        sessionStorage.setItem('arbainShownThisSession', '1');
-      }, ARBAIN_DELAY);
-    }
+      }, ARBAIN_DELAY_MS);
 
-    // Donation: show after 3 minutes of activity (mousemove/keydown/scroll)
-    const ACTIVITY_DELAY = 3 * 60 * 1000; // 3 minutes
-    const startTimer = () => {
-      if (activityTimerRef.current) return;
-      activityTimerRef.current = window.setTimeout(() => {
-        // only once per session
-        if (!sessionStorage.getItem('donationShownThisSession')) {
-          setShowDonate(true);
-          sessionStorage.setItem('donationShownThisSession', '1');
-        }
-      }, ACTIVITY_DELAY);
-      ['mousemove', 'keydown', 'scroll', 'click', 'touchstart'].forEach((evt) =>
-        window.removeEventListener(evt, startTimer)
-      );
-    };
-    ['mousemove', 'keydown', 'scroll', 'click', 'touchstart'].forEach((evt) =>
-      window.addEventListener(evt, startTimer, { passive: true })
-    );
+      // schedule Donation popup once per page load
+      donateTimerRef.current = window.setTimeout(() => {
+        setShowDonate(true);
+      }, DONATE_DELAY_MS);
 
-    // Exit-intent: show donation when user attempts to leave or tab hidden, once
-    const onBeforeUnload = () => {
-      if (!exitIntentShownRef.current) {
-        exitIntentShownRef.current = true;
-        if (!showDonate) setShowDonate(true);
-      }
+      // stop listening after first valid scroll
+      window.removeEventListener('scroll', onFirstScroll);
     };
-    const onVisibilityChange = () => {
-      if (document.visibilityState === 'hidden' && !exitIntentShownRef.current) {
-        exitIntentShownRef.current = true;
-        if (!showDonate) setShowDonate(true);
-      }
-    };
-    window.addEventListener('beforeunload', onBeforeUnload);
-    document.addEventListener('visibilitychange', onVisibilityChange);
+
+    // Attach first-scroll listener
+    window.addEventListener('scroll', onFirstScroll, { passive: true });
 
     // Back to top visibility
     const onScrollBackTop = () => setShowBackToTop(window.scrollY > 400);
@@ -81,14 +64,47 @@ const App: React.FC = () => {
     };
     document.addEventListener('keydown', onKeyDown);
 
+    // Auto-dismiss fallback after 5s if user cannot close
+    if (showArbain) {
+      if (autoCloseArbainRef.current) clearTimeout(autoCloseArbainRef.current);
+      autoCloseArbainRef.current = window.setTimeout(() => {
+        setShowArbain(false);
+      }, 5000);
+    } else if (autoCloseArbainRef.current) {
+      clearTimeout(autoCloseArbainRef.current);
+      autoCloseArbainRef.current = null;
+    }
+
+    if (showDonate) {
+      if (autoCloseDonateRef.current) clearTimeout(autoCloseDonateRef.current);
+      autoCloseDonateRef.current = window.setTimeout(() => {
+        setShowDonate(false);
+      }, 5000);
+    } else if (autoCloseDonateRef.current) {
+      clearTimeout(autoCloseDonateRef.current);
+      autoCloseDonateRef.current = null;
+    }
+
     return () => {
-      if (arbainTimer) clearTimeout(arbainTimer);
-      if (activityTimerRef.current) clearTimeout(activityTimerRef.current);
-      ['mousemove', 'keydown', 'scroll', 'click', 'touchstart'].forEach((evt) =>
-        window.removeEventListener(evt, startTimer)
-      );
-      window.removeEventListener('beforeunload', onBeforeUnload);
-      document.removeEventListener('visibilitychange', onVisibilityChange);
+      // clear scheduled popups
+      if (arbainTimerRef.current) {
+        clearTimeout(arbainTimerRef.current);
+        arbainTimerRef.current = null;
+      }
+      if (donateTimerRef.current) {
+        clearTimeout(donateTimerRef.current);
+        donateTimerRef.current = null;
+      }
+      // clear auto-dismiss timers
+      if (autoCloseArbainRef.current) {
+        clearTimeout(autoCloseArbainRef.current);
+        autoCloseArbainRef.current = null;
+      }
+      if (autoCloseDonateRef.current) {
+        clearTimeout(autoCloseDonateRef.current);
+        autoCloseDonateRef.current = null;
+      }
+      window.removeEventListener('scroll', onFirstScroll);
       window.removeEventListener('scroll', onScrollBackTop);
       document.removeEventListener('keydown', onKeyDown);
     };
