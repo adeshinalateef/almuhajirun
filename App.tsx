@@ -31,7 +31,7 @@ const App: React.FC = () => {
       initializedOnScrollRef.current = true;
 
       const ARBAIN_DELAY_MS = 3000; // 3 seconds after scroll
-      const DONATE_DELAY_MS = 22_000; // 22 seconds after scroll
+      const DONATE_DELAY_MS = 23_000; // 23 seconds after scroll (20s after the first CTA)
 
       // schedule Arba'in popup once per page load
       arbainTimerRef.current = window.setTimeout(() => {
@@ -68,7 +68,7 @@ const App: React.FC = () => {
       if (autoCloseArbainRef.current) clearTimeout(autoCloseArbainRef.current);
       autoCloseArbainRef.current = window.setTimeout(() => {
         setShowArbain(false);
-      }, 5000);
+      }, 10000); // Auto-dismiss after 10 seconds
     } else if (autoCloseArbainRef.current) {
       clearTimeout(autoCloseArbainRef.current);
       autoCloseArbainRef.current = null;
@@ -78,7 +78,7 @@ const App: React.FC = () => {
       if (autoCloseDonateRef.current) clearTimeout(autoCloseDonateRef.current);
       autoCloseDonateRef.current = window.setTimeout(() => {
         setShowDonate(false);
-      }, 5000);
+      }, 10000); // Auto-dismiss after 10 seconds
     } else if (autoCloseDonateRef.current) {
       clearTimeout(autoCloseDonateRef.current);
       autoCloseDonateRef.current = null;
@@ -126,6 +126,11 @@ const App: React.FC = () => {
   const onCloseArbain = () => {
     setShowArbain(false);
     lastFocusedRef.current?.focus?.();
+    // If the first CTA is closed, cancel the second one from appearing
+    if (donateTimerRef.current) {
+      clearTimeout(donateTimerRef.current);
+      donateTimerRef.current = null;
+    }
   };
 
   return (
