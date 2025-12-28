@@ -21,17 +21,14 @@ const App: React.FC = () => {
 
   useEffect(() => {
     document.title = "Al-Muhaajirun";
-  }, []);
 
-  // CTA triggers based on first scroll and UX improvements
-  useEffect(() => {
     const onFirstScroll = () => {
       if (initializedOnScrollRef.current) return;
       if (window.scrollY <= 0) return; // ensure actual scroll occurred
       initializedOnScrollRef.current = true;
 
       const ARBAIN_DELAY_MS = 3000; // 3 seconds after scroll
-      const DONATE_DELAY_MS = 23_000; // 23 seconds after scroll (20s after the first CTA)
+      const DONATE_DELAY_MS = 15_000; // 15 seconds after scroll (12s after the first CTA)
 
       // schedule Arba'in popup once per page load
       arbainTimerRef.current = window.setTimeout(() => {
@@ -54,6 +51,23 @@ const App: React.FC = () => {
     const onScrollBackTop = () => setShowBackToTop(window.scrollY > 400);
     window.addEventListener('scroll', onScrollBackTop, { passive: true });
 
+    return () => {
+      // clear scheduled popups
+      if (arbainTimerRef.current) {
+        clearTimeout(arbainTimerRef.current);
+        arbainTimerRef.current = null;
+      }
+      if (donateTimerRef.current) {
+        clearTimeout(donateTimerRef.current);
+        donateTimerRef.current = null;
+      }
+      window.removeEventListener('scroll', onFirstScroll);
+      window.removeEventListener('scroll', onScrollBackTop);
+    };
+  }, []);
+
+  // CTA triggers based on first scroll and UX improvements
+  useEffect(() => {
     // ESC key to close modals
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -63,7 +77,7 @@ const App: React.FC = () => {
     };
     document.addEventListener('keydown', onKeyDown);
 
-    // Auto-dismiss fallback after 5s if user cannot close
+    // Auto-dismiss fallback after 10s if user cannot close
     if (showArbain) {
       if (autoCloseArbainRef.current) clearTimeout(autoCloseArbainRef.current);
       autoCloseArbainRef.current = window.setTimeout(() => {
@@ -85,15 +99,6 @@ const App: React.FC = () => {
     }
 
     return () => {
-      // clear scheduled popups
-      if (arbainTimerRef.current) {
-        clearTimeout(arbainTimerRef.current);
-        arbainTimerRef.current = null;
-      }
-      if (donateTimerRef.current) {
-        clearTimeout(donateTimerRef.current);
-        donateTimerRef.current = null;
-      }
       // clear auto-dismiss timers
       if (autoCloseArbainRef.current) {
         clearTimeout(autoCloseArbainRef.current);
@@ -103,8 +108,6 @@ const App: React.FC = () => {
         clearTimeout(autoCloseDonateRef.current);
         autoCloseDonateRef.current = null;
       }
-      window.removeEventListener('scroll', onFirstScroll);
-      window.removeEventListener('scroll', onScrollBackTop);
       document.removeEventListener('keydown', onKeyDown);
     };
   }, [showDonate, showArbain]);
@@ -126,11 +129,6 @@ const App: React.FC = () => {
   const onCloseArbain = () => {
     setShowArbain(false);
     lastFocusedRef.current?.focus?.();
-    // If the first CTA is closed, cancel the second one from appearing
-    if (donateTimerRef.current) {
-      clearTimeout(donateTimerRef.current);
-      donateTimerRef.current = null;
-    }
   };
 
   return (
@@ -271,8 +269,8 @@ const App: React.FC = () => {
             </div>
             <button
               onClick={onCloseDonate}
-              className="inline-flex items-center justify-center gap-2 w-full bg-emerald-800 hover:bg-emerald-900 text-white font-semibold px-5 py-3 rounded-lg shadow">
-              Close
+              className="inline-flex items-center justify-center gap-2 w-full bg-red-600 hover:bg-red-700 text-white font-semibold px-5 py-3 rounded-lg shadow">
+              Cancel
             </button>
             <p className="text-xs text-slate-400 mt-3 text-center">May Allah reward you abundantly.</p>
           </div>
@@ -304,6 +302,11 @@ const App: React.FC = () => {
               Join the Daily Explanation Group
               <i className="fa-solid fa-arrow-up-right-from-square"></i>
             </a>
+            <button
+              onClick={onCloseArbain}
+              className="mt-2 inline-flex items-center justify-center gap-2 w-full bg-red-600 hover:bg-red-700 text-white font-semibold px-5 py-3 rounded-lg shadow">
+              Cancel
+            </button>
             <p className="text-xs text-slate-400 mt-3 text-center">Free to join. All are welcome.</p>
           </div>
         </div>
